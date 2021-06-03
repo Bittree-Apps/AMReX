@@ -2,6 +2,7 @@ module amrex_amrcore_module
 
   use iso_c_binding
   use amrex_base_module
+  use amrex_newgrid_module
 
   implicit none
 
@@ -178,12 +179,12 @@ module amrex_amrcore_module
        type(c_ptr), value :: amrcore
      end subroutine amrex_fi_regrid_default
 
-     subroutine amrex_fi_regrid_callback (baselev, t, callbackflg, amrcore) bind(c)
+     subroutine amrex_fi_regrid_callback (baselev, t, fnewgrid, amrcore) bind(c)
        import
        implicit none
        integer(c_int), value :: baselev
        real(amrex_real), value :: t
-       logical(c_int), value :: callbackflg
+       type(c_funptr), value :: fnewgrid
        type(c_ptr), value :: amrcore
      end subroutine amrex_fi_regrid_callback
   end interface
@@ -301,11 +302,11 @@ contains
     if (associated(amrex_post_regrid)) call amrex_post_regrid
   end subroutine amrex_regrid_default
 
-  subroutine amrex_regrid_callback (baselev, t, callbackflg)
+  subroutine amrex_regrid_callback (baselev, t, fnewgrid)
     integer, intent(in) :: baselev
     real(amrex_real), intent(in) :: t
-    logical, intent(in) :: callbackflg
-    call amrex_fi_regrid_callback(baselev, t, callbackflg, amrcore)
+    procedure(amrex_newgrid_proc) :: fnewgrid
+    call amrex_fi_regrid_callback(baselev, t, c_funloc(fnewgrid), amrcore)
     if (associated(amrex_post_regrid)) call amrex_post_regrid
   end subroutine amrex_regrid_callback
 

@@ -118,6 +118,77 @@ AmrCore::regrid (int lbase, Real time, bool)
     finest_level = new_finest;
 }
 
+void
+AmrCore::regrid (int lbase, Real time, int callbackflg, bool)
+{
+    if (lbase >= max_level) return;
+
+    int new_finest;
+    Vector<BoxArray> new_grids(finest_level+2);
+
+    // TODO: MakeNewGrids for Bittree
+    // if(use_bittree)
+    // { 
+    // MakeNewGrids(lbase, time, grids, new_finest, new_grids, new_distributionMap)
+    // }
+    // else
+    // {
+    MakeNewGrids(lbase, time, new_finest, new_grids);
+    // }
+
+    BL_ASSERT(new_finest <= finest_level+1);
+
+    bool coarse_ba_changed = false;
+    for (int lev = lbase+1; lev <= new_finest; ++lev)
+    {
+        if (lev <= finest_level) // an old level
+        {
+            bool ba_changed = (new_grids[lev] != grids[lev]);
+            if (ba_changed || coarse_ba_changed) {
+                BoxArray level_grids = grids[lev];
+                DistributionMapping level_dmap = dmap[lev];
+                if (ba_changed) {
+                    level_grids = new_grids[lev];
+                    // TODO for bittree
+                    // if(use_bittre)
+                    // {
+                    // level_dmap = new_distributionMap;
+                    // }
+                    // else
+                    // {
+                    level_dmap = DistributionMapping(level_grids);
+                    // }
+                }
+                const auto old_num_setdm = num_setdm;
+                RemakeLevel(lev, time, level_grids, level_dmap);
+                SetBoxArray(lev, level_grids);
+                if (old_num_setdm == num_setdm) {
+                    SetDistributionMap(lev, level_dmap);
+                }
+            }
+            coarse_ba_changed = ba_changed;;
+        }
+        else  // a new level
+        {
+            DistributionMapping new_dmap(new_grids[lev]);
+            const auto old_num_setdm = num_setdm;
+            MakeNewLevelFromCoarse(lev, time, new_grids[lev], new_dmap);
+            SetBoxArray(lev, new_grids[lev]);
+            if (old_num_setdm == num_setdm) {
+                SetDistributionMap(lev, new_dmap);
+            }
+        }
+    }
+
+    for (int lev = new_finest+1; lev <= finest_level; ++lev) {
+        ClearLevel(lev);
+        ClearBoxArray(lev);
+        ClearDistributionMap(lev);
+    }
+
+    finest_level = new_finest;
+}
+
 
 void
 AmrCore::printGridSummary (std::ostream& os, int min_lev, int max_lev) const noexcept

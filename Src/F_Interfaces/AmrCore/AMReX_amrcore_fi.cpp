@@ -117,8 +117,14 @@ extern "C" {
         amrcore->error_est                   = err_est;
     }
 
-    void amrex_fi_regrid (int baselev, Real t, FAmrCore* amrcore)
+    void amrex_fi_regrid_default (int baselev, Real t, FAmrCore* amrcore)
     {
         amrcore->regrid(baselev, t);
     }
+
+    void amrex_fi_regrid_callback (int baselev, Real t, int callbackflg, FAmrCore* amrcore)
+    {
+        amrcore->regrid(baselev, t, callbackflg);
+    }
+
 }

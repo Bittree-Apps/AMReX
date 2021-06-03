@@ -23,7 +23,7 @@ module amrex_newgrid_module
   interface
      subroutine amrex_newgrid_proc (callbackflg) bind(c)
        import
-       logical(c_int), value :: callbackflg
+       integer(c_int), value :: callbackflg
      end subroutine amrex_newgrid_proc
   end interface
 

@@ -5,7 +5,10 @@ module amrex_amrcore_module
 
   implicit none
 
-  private
+  private :: amrex_regrid_default, amrex_regrid_callback
+
+  ! public interface for regrid
+  public :: amrex_regrid
 
   ! public routines
   public :: amrex_amrcore_init, amrex_amrcore_finalize, amrex_amrcore_initialized, &
@@ -13,7 +16,7 @@ module amrex_amrcore_module
        amrex_get_boxarray, amrex_get_distromap, amrex_get_geometry, &
        amrex_set_boxarray, amrex_set_distromap, amrex_set_geometry, &
        amrex_set_finest_level, &
-       amrex_init_from_scratch, amrex_init_virtual_functions, amrex_regrid, &
+       amrex_init_from_scratch, amrex_init_virtual_functions, &
        amrex_init_post_regrid_function
 
   ! public variables
@@ -51,6 +54,10 @@ module amrex_amrcore_module
      subroutine amrex_post_regrid_proc ()
      end subroutine amrex_post_regrid_proc
   end interface
+
+  interface amrex_regrid
+     module procedure amrex_regrid_default, amrex_regrid_callback
+  end interface amrex_regrid
 
   type(c_ptr) :: amrcore = c_null_ptr
 
@@ -162,13 +169,22 @@ module amrex_amrcore_module
        type(c_ptr), value :: amrcore
      end subroutine amrex_fi_init_virtual_functions
 
-     subroutine amrex_fi_regrid (baselev, t, amrcore) bind(c)
+     subroutine amrex_fi_regrid_default (baselev, t, amrcore) bind(c)
        import
        implicit none
        integer(c_int), value :: baselev
        real(amrex_real), value :: t
        type(c_ptr), value :: amrcore
-     end subroutine amrex_fi_regrid
+     end subroutine amrex_fi_regrid_default
+
+     subroutine amrex_fi_regrid_callback (baselev, t, callbackflg, amrcore) bind(c)
+       import
+       implicit none
+       integer(c_int), value :: baselev
+       real(amrex_real), value :: t
+       logical(c_int), value :: callbackflg
+       type(c_ptr), value :: amrcore
+     end subroutine amrex_fi_regrid_callback
   end interface
 
   logical, save, private :: call_amrex_finalize = .false.
@@ -277,12 +293,20 @@ contains
          amrcore)
   end subroutine amrex_init_virtual_functions
 
-  subroutine amrex_regrid (baselev, t)
+  subroutine amrex_regrid_default (baselev, t)
     integer, intent(in) :: baselev
     real(amrex_real), intent(in) :: t
-    call amrex_fi_regrid(baselev, t, amrcore)
+    call amrex_fi_regrid_default(baselev, t, amrcore)
     if (associated(amrex_post_regrid)) call amrex_post_regrid
-  end subroutine amrex_regrid
+  end subroutine amrex_regrid_default
+
+  subroutine amrex_regrid_callback (baselev, t, callbackflg)
+    integer, intent(in) :: baselev
+    real(amrex_real), intent(in) :: t
+    logical, intent(in) :: callbackflg
+    call amrex_fi_regrid_callback(baselev, t, callbackflg, amrcore)
+    if (associated(amrex_post_regrid)) call amrex_post_regrid
+  end subroutine amrex_regrid_callback
 
   subroutine amrex_init_post_regrid_function (post_regrid_func)
     procedure(amrex_post_regrid_proc) :: post_regrid_func

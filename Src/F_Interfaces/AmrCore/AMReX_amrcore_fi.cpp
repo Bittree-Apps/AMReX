@@ -1,4 +1,4 @@
-
+#include <AMReX_FNewGrid.H>
 #include <AMReX_FAmrCore.H>
 
 using namespace amrex;
@@ -122,9 +122,9 @@ extern "C" {
         amrcore->regrid(baselev, t);
     }
 
-    void amrex_fi_regrid_callback (int baselev, Real t, int callbackflg, FAmrCore* amrcore)
+    void amrex_fi_regrid_callback (int baselev, Real t, FNewGrid::newgrid_funptr_t fnewgrid, FAmrCore* amrcore)
     {
-        amrcore->regrid(baselev, t, callbackflg);
+        amrcore->regrid(baselev, t);
     }
 
 }

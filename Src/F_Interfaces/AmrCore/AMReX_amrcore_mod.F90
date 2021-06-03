@@ -56,7 +56,8 @@ module amrex_amrcore_module
   end interface
 
   interface amrex_regrid
-     module procedure amrex_regrid_default, amrex_regrid_callback
+     module procedure amrex_regrid_default
+     module procedure amrex_regrid_callback
   end interface amrex_regrid
 
   type(c_ptr) :: amrcore = c_null_ptr

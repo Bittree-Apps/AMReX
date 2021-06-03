@@ -119,8 +119,11 @@ AmrCore::regrid (int lbase, Real time, bool)
 }
 
 void
-AmrCore::regrid (int lbase, Real time, int callbackflg, bool)
+AmrCore::regrid (int lbase, Real time, fcallback callbackfunc, bool)
 {
+
+    callbackfunc(0);
+
     if (lbase >= max_level) return;
 
     int new_finest;

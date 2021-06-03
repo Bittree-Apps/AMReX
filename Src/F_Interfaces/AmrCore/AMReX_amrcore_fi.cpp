@@ -124,7 +124,8 @@ extern "C" {
 
     void amrex_fi_regrid_callback (int baselev, Real t, FNewGrid::newgrid_funptr_t fnewgrid, FAmrCore* amrcore)
     {
-        amrcore->regrid(baselev, t);
+        FNewGrid fng(fnewgrid);
+        amrcore->regrid(baselev, t, fnewgrid);
     }
 
 }

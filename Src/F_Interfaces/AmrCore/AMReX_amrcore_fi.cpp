@@ -1,4 +1,5 @@
 #include <AMReX_FAmrCore.H>
+#include <AMReX_FNewGrid.H>
 
 using namespace amrex;
 

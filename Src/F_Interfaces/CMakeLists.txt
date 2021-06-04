@@ -69,6 +69,7 @@ target_sources(amrex PRIVATE
    AmrCore/AMReX_tagbox_fi.cpp
    AmrCore/AMReX_tagbox_mod.F90
    AmrCore/AMReX_newgrid_mod.F90
+   AmrCore/AMReX_FNewGrid.H
    )
 
 

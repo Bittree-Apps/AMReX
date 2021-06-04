@@ -4,7 +4,6 @@
 
 #include <AMReX_AmrCore.H>
 #include <AMReX_MultiFab.H>
-#include <AMReX_NewGridFunct.H>
 #include <functional>
 
 namespace amrex {

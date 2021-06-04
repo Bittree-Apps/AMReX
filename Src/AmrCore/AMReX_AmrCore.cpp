@@ -119,7 +119,7 @@ AmrCore::regrid (int lbase, Real time, bool)
 }
 
 void
-AmrCore::regrid (int lbase, Real time, fcallback callbackfunc, bool)
+AmrCore::regrid (int lbase, Real time, fnewgridcallback callbackfunc, bool)
 {
 
     callbackfunc(0);

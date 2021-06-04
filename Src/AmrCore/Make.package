@@ -8,6 +8,8 @@ CEXE_headers += AMReX_Interp_C.H AMReX_Interp_$(DIM)D_C.H
 
 CEXE_headers += AMReX_FluxReg_$(DIM)D_C.H AMReX_FluxReg_C.H
 
+CEXE_headers += AMReX_NewGridFunct.H
+
 ifeq ($(USE_PARTICLES), TRUE)
   CEXE_headers += AMReX_AmrParGDB.H AMReX_AmrParticles.H
 endif

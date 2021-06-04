@@ -4,6 +4,8 @@
 
 #include <AMReX_AmrMesh.H>
 
+#include <AMReX_NewGridFunct.H>
+
 #include <iosfwd>
 #include <memory>
 
@@ -64,8 +66,7 @@ public:
     virtual void regrid (int lbase, Real time, bool initial=false);
 
     //! Rebuild levels finer than lbase using a callback function 
-    typedef void (*fcallback) (int); 
-    virtual void regrid (int lbase, Real time, fcallback callbackfunc, bool initial=false);
+    virtual void regrid (int lbase, Real time, fnewgridcallback callbackfunc, bool initial=false);
 
     void printGridSummary (std::ostream& os, int min_lev, int max_lev) const noexcept;
 

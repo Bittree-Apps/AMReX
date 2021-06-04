@@ -179,12 +179,12 @@ module amrex_amrcore_module
        type(c_ptr), value :: amrcore
      end subroutine amrex_fi_regrid_default
 
-     subroutine amrex_fi_regrid_callback (baselev, t, fnewgrid, amrcore) bind(c)
+     subroutine amrex_fi_regrid_callback (baselev, t, callbackfunc, amrcore) bind(c)
        import
        implicit none
        integer(c_int), value :: baselev
        real(amrex_real), value :: t
-       type(c_funptr), value :: fnewgrid
+       type(c_funptr), value :: callbackfunc
        type(c_ptr), value :: amrcore
      end subroutine amrex_fi_regrid_callback
   end interface
@@ -302,11 +302,11 @@ contains
     if (associated(amrex_post_regrid)) call amrex_post_regrid
   end subroutine amrex_regrid_default
 
-  subroutine amrex_regrid_callback (baselev, t, fnewgrid)
+  subroutine amrex_regrid_callback (baselev, t, callbackfunc)
     integer, intent(in) :: baselev
     real(amrex_real), intent(in) :: t
-    procedure(amrex_newgrid_proc) :: fnewgrid
-    call amrex_fi_regrid_callback(baselev, t, c_funloc(fnewgrid), amrcore)
+    procedure(amrex_newgrid_procedure) :: callbackfunc
+    call amrex_fi_regrid_callback(baselev, t, c_funloc(callbackfunc), amrcore)
     if (associated(amrex_post_regrid)) call amrex_post_regrid
   end subroutine amrex_regrid_callback
 

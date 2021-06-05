@@ -7,7 +7,7 @@ F90EXE_sources += AMReX_newgrid_mod.F90
 CEXE_sources += AMReX_amrcore_fi.cpp AMReX_tagbox_fi.cpp AMReX_fillpatch_fi.cpp
 CEXE_sources += AMReX_fluxregister_fi.cpp AMReX_flash_fluxregister_fi.cpp
 
-CEXE_headers += AMReX_FAmrCore.H AMReX_FlashFluxRegister.H AMReX_FNewGrid.H
+CEXE_headers += AMReX_FAmrCore.H AMReX_FlashFluxRegister.H
 CEXE_sources += AMReX_FAmrCore.cpp AMReX_FlashFluxRegister.cpp
 
 VPATH_LOCATIONS += $(AMREX_HOME)/Src/F_Interfaces/AmrCore

@@ -68,7 +68,8 @@ target_sources(amrex PRIVATE
    AmrCore/AMReX_interpolater_mod.F90
    AmrCore/AMReX_tagbox_fi.cpp
    AmrCore/AMReX_tagbox_mod.F90
-   AmrCore/AMReX_newgrid_mod.F90
+   AmrCore/AMReX_bittree_mod.F90
+   AmrCore/AMReX_FBittree.H
    )
 
 

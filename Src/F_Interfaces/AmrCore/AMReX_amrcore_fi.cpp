@@ -1,4 +1,5 @@
 #include <AMReX_FAmrCore.H>
+#include <AMReX_FBittree.H>
 
 using namespace amrex;
 
@@ -121,9 +122,10 @@ extern "C" {
         amrcore->regrid(baselev, t);
     }
 
-    void amrex_fi_regrid_callback (int baselev, Real t, fnewgridcallback callbackfunc, FAmrCore* amrcore)
+    void amrex_fi_regrid_bittree (int baselev, Real t, FBittree::bittree_funptr_t bittree_callback, FAmrCore* amrcore)
     {
-        amrcore->regrid(baselev, t, callbackfunc);
+        FBittree bittree_new_grid(bittree_callback);
+        amrcore->regrid(baselev, t, bittree_new_grid);
     }
 
 }

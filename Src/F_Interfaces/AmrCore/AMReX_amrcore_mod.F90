@@ -2,11 +2,11 @@ module amrex_amrcore_module
 
   use iso_c_binding
   use amrex_base_module
-  use amrex_newgrid_module
+  use amrex_bittree_module
 
   implicit none
 
-  private :: amrex_regrid_default, amrex_regrid_callback
+  private :: amrex_regrid_default, amrex_regrid_bittree
 
   ! public interface for regrid
   public :: amrex_regrid
@@ -58,7 +58,7 @@ module amrex_amrcore_module
 
   interface amrex_regrid
      module procedure amrex_regrid_default
-     module procedure amrex_regrid_callback
+     module procedure amrex_regrid_bittree
   end interface amrex_regrid
 
   type(c_ptr) :: amrcore = c_null_ptr
@@ -179,14 +179,14 @@ module amrex_amrcore_module
        type(c_ptr), value :: amrcore
      end subroutine amrex_fi_regrid_default
 
-     subroutine amrex_fi_regrid_callback (baselev, t, callbackfunc, amrcore) bind(c)
+     subroutine amrex_fi_regrid_bittree (baselev, t, bittree_callback, amrcore) bind(c)
        import
        implicit none
        integer(c_int), value :: baselev
        real(amrex_real), value :: t
-       type(c_funptr), value :: callbackfunc
+       type(c_funptr), value :: bittree_callback
        type(c_ptr), value :: amrcore
-     end subroutine amrex_fi_regrid_callback
+     end subroutine amrex_fi_regrid_bittree
   end interface
 
   logical, save, private :: call_amrex_finalize = .false.
@@ -302,13 +302,13 @@ contains
     if (associated(amrex_post_regrid)) call amrex_post_regrid
   end subroutine amrex_regrid_default
 
-  subroutine amrex_regrid_callback (baselev, t, callbackfunc)
+  subroutine amrex_regrid_bittree (baselev, t, bittree_callback)
     integer, intent(in) :: baselev
     real(amrex_real), intent(in) :: t
-    procedure(amrex_newgrid_procedure) :: callbackfunc
-    call amrex_fi_regrid_callback(baselev, t, c_funloc(callbackfunc), amrcore)
+    procedure(amrex_bittree_procedure) :: bittree_callback
+    call amrex_fi_regrid_bittree(baselev, t, c_funloc(bittree_callback), amrcore)
     if (associated(amrex_post_regrid)) call amrex_post_regrid
-  end subroutine amrex_regrid_callback
+  end subroutine amrex_regrid_bittree
 
   subroutine amrex_init_post_regrid_function (post_regrid_func)
     procedure(amrex_post_regrid_proc) :: post_regrid_func

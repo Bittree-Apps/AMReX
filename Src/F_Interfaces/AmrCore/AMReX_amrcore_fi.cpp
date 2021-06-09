@@ -124,8 +124,8 @@ extern "C" {
 
     void amrex_fi_regrid_bittree (int baselev, Real t, FBittree::bittree_funptr_t bittree_callback, FAmrCore* amrcore)
     {
-        FBittree bittree_new_grid(bittree_callback);
-        amrcore->regrid(baselev, t, bittree_new_grid);
+        FBittree MakeNewGrids_bittree(bittree_callback);
+        amrcore->regrid(baselev, t, MakeNewGrids_bittree);
     }
 
 }

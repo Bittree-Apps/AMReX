@@ -119,10 +119,10 @@ AmrCore::regrid (int lbase, Real time, bool)
 }
 
 void
-AmrCore::regrid (int lbase, Real time, BittreeFunct& bittree_new_grid, bool)
+AmrCore::regrid (int lbase, Real time, BittreeFunct& MakeNewGrids_bittree, bool)
 {
 
-    bittree_new_grid(1);
+    MakeNewGrids_bittree(0);
 
     if (lbase >= max_level) return;
 

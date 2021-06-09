@@ -61,11 +61,11 @@ module amrex_amrcore_module
      module procedure amrex_regrid_bittree
   end interface amrex_regrid
 
-  type(c_ptr) :: amrcore = c_null_ptr
+  type(c_ptr), save :: amrcore = c_null_ptr
 
-  integer :: amrex_max_level
-  integer, allocatable :: amrex_ref_ratio(:)
-  type(amrex_geometry), allocatable :: amrex_geom(:)
+  integer, save :: amrex_max_level
+  integer, allocatable, save :: amrex_ref_ratio(:)
+  type(amrex_geometry), allocatable, save :: amrex_geom(:)
 
   procedure(amrex_post_regrid_proc), pointer :: amrex_post_regrid => null()
 

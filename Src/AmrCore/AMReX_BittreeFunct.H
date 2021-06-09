@@ -17,7 +17,7 @@ public:
 
     void operator() (int bittree_flg);
 
-protected:
+private:
     bittree_funptr_t bittree_func = nullptr;
 };
 }

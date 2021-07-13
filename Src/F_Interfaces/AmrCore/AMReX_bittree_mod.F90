@@ -14,7 +14,8 @@ module amrex_bittree_module
        import
        integer(c_int), value :: lbase
        real(amrex_real), value :: time
-       type(c_ptr), value :: new_finest,new_grid,bittree_dmap      
+       type(c_ptr), value :: new_finest
+       type(c_ptr) :: new_grid,bittree_dmap      
      end subroutine amrex_bittree_procedure
   end interface
 

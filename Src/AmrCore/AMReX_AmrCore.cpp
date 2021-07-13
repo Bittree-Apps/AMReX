@@ -135,7 +135,10 @@ AmrCore::regrid (int lbase, Real time, BittreeFunct& MakeNewGrids_bittree, bool)
     // }
     // else
     // {
-    MakeNewGrids_bittree(lbase, time, new_finest, new_grids, bittree_dmap);
+    for (int lev=lbase; lev<= finest_level+2; ++lev)
+    {
+        MakeNewGrids_bittree(lbase, time, new_finest, new_grids[lev], bittree_dmap[lev]);
+    }
     // }
 
     BL_ASSERT(new_finest <= finest_level+1);

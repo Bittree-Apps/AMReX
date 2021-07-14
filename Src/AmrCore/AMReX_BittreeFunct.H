@@ -12,7 +12,7 @@ namespace amrex
 class BittreeFunct
 {
 public:
-    using bittree_funptr_t = void(*)(int lbase, Real time, int& new_finest, BoxArray new_grids, DistributionMapping bittree_dmap);
+    using bittree_funptr_t = void(*)(int lbase, Real time, int& new_finest, BoxArray& new_grids, DistributionMapping& bittree_dmap);
 
     BittreeFunct (bittree_funptr_t bittree_callback) : bittree_func(bittree_callback) {}
 

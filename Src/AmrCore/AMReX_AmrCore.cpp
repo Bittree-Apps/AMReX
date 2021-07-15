@@ -119,19 +119,14 @@ AmrCore::regrid (int lbase, Real time, bool)
 }
 
 void
-AmrCore::regrid (int lbase, Real time, BittreeFunct& MakeNewGrids_bittree, bool)
+AmrCore::regrid (int lbase, Real time, BittreeFunct& bittree_callback, bool)
 {
 
     if (lbase >= max_level) return;
 
     int new_finest;
     Vector<BoxArray> new_grids(finest_level+2);
-    Vector<DistributionMapping> bittree_dmap(finest_level+2);
-
-    for (int lev=lbase; lev<= finest_level+2; ++lev)
-    {
-        MakeNewGrids_bittree(lev, time, new_finest, new_grids[lev], bittree_dmap[lev]);
-    }
+    MakeNewGrids(lbase, time, new_finest, new_grids, bittree_callback);
 
     BL_ASSERT(new_finest <= finest_level+1);
 
@@ -143,7 +138,7 @@ AmrCore::regrid (int lbase, Real time, BittreeFunct& MakeNewGrids_bittree, bool)
             bool ba_changed = (new_grids[lev] != grids[lev]);
             if (ba_changed || coarse_ba_changed) {
                 BoxArray level_grids = grids[lev];
-                DistributionMapping level_dmap = bittree_dmap[lev];
+                DistributionMapping level_dmap = dmap[lev];
                 if (ba_changed) {
                     level_grids = new_grids[lev];
                     level_dmap = DistributionMapping(level_grids);

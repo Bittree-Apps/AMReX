@@ -10,9 +10,9 @@ module amrex_bittree_module
   public :: amrex_bittree_procedure
 
   interface
-     subroutine amrex_bittree_procedure (lbase,time,new_finest,new_grid,bittree_dmap) bind(c)
+     subroutine amrex_bittree_procedure (lev,time,new_finest,new_grid,bittree_dmap) bind(c)
        import
-       integer(c_int), value :: lbase
+       integer(c_int), value :: lev
        real(amrex_real), value :: time
        type(c_ptr), value :: new_finest,new_grid,bittree_dmap
      end subroutine amrex_bittree_procedure

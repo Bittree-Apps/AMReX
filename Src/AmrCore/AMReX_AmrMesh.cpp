@@ -464,11 +464,11 @@ AmrMesh::MakeBaseGrids () const
 }
 
 void
-AmrMesh::MakeNewGrids (int lbase, Real time, int& new_finest, Vector<BoxArray>& new_grids, BittreeFunct& bittree_callback)
+AmrMesh::MakeNewGrids (int lbase, Real time, int& new_finest, Vector<BoxArray>& new_grids, Vector<DistributionMapping>& new_dmap, BittreeFunct& bittree_callback)
 {
     for (int lev=lbase; lev<= finest_level+2; ++lev)
     {
-        bittree_callback(lev, time, new_finest, new_grids[lev], dmap[lev]);
+        bittree_callback(lev, time, new_finest, new_grids[lev], new_dmap[lev]);
     }  
 }
 

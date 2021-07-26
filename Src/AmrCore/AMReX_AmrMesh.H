@@ -221,7 +221,7 @@ public:
     //! This function makes new grid for all levels (including level 0).
     void MakeNewGrids (Real time = 0.0);
 
-    void MakeNewGrids (int lbase, Real time, int& new_finest, Vector<BoxArray>& new_grids, BittreeFunct& bittree_callback);
+    void MakeNewGrids (int lbase, Real time, int& new_finest, Vector<BoxArray>& new_grids, Vector<DistributionMapping>& new_dmap, BittreeFunct& bittree_callback);
 
     //! This function is called by the second version of MakeNewGrids.
     //! Make a new level from scratch using provided BoxArray and DistributionMapping.

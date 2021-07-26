@@ -126,41 +126,41 @@ AmrCore::regrid (int lbase, Real time, BittreeFunct& bittree_callback, bool)
 
     int new_finest;
     Vector<BoxArray> new_grids(finest_level+2);
-    MakeNewGrids(lbase, time, new_finest, new_grids, bittree_callback);
+    Vector<DistributionMapping> new_dmap(finest_level+2);
+    MakeNewGrids(lbase, time, new_finest, new_grids, new_dmap, bittree_callback);
 
     BL_ASSERT(new_finest <= finest_level+1);
 
-    bool coarse_ba_changed = false;
+    bool coarse_changed = false;
     for (int lev = lbase+1; lev <= new_finest; ++lev)
     {
         if (lev <= finest_level) // an old level
         {
             bool ba_changed = (new_grids[lev] != grids[lev]);
-            if (ba_changed || coarse_ba_changed) {
+            bool dm_changed = (new_dmap[lev] != dmap[lev] );
+            if (ba_changed || coarse_changed || dm_changed) {
                 BoxArray level_grids = grids[lev];
-                DistributionMapping level_dmap = dmap[lev];
+                DistributionMapping level_dmap = new_dmap[lev];
                 if (ba_changed) {
                     level_grids = new_grids[lev];
-                    level_dmap = DistributionMapping(level_grids);
                 }
                 const auto old_num_setdm = num_setdm;
                 RemakeLevel(lev, time, level_grids, level_dmap);
                 SetBoxArray(lev, level_grids);
-                if (old_num_setdm == num_setdm) {
+                //if (old_num_setdm == num_setdm) {
                     SetDistributionMap(lev, level_dmap);
-                }
+                //}
             }
-            coarse_ba_changed = ba_changed;;
+            coarse_changed = ba_changed || dm_changed;
         }
         else  // a new level
         {
-            DistributionMapping new_dmap(new_grids[lev]);
             const auto old_num_setdm = num_setdm;
-            MakeNewLevelFromCoarse(lev, time, new_grids[lev], new_dmap);
+            MakeNewLevelFromCoarse(lev, time, new_grids[lev], new_dmap[lev]);
             SetBoxArray(lev, new_grids[lev]);
-            if (old_num_setdm == num_setdm) {
-                SetDistributionMap(lev, new_dmap);
-            }
+            //if (old_num_setdm == num_setdm) {
+                SetDistributionMap(lev, new_dmap[lev]);
+            //}
         }
     }
 

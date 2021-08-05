@@ -132,7 +132,7 @@ AmrCore::regrid (int lbase, Real time, BittreeFunct& bittree_callback, bool)
     BL_ASSERT(new_finest <= finest_level+1);
 
     bool coarse_changed = false;
-    for (int lev = lbase+1; lev <= new_finest; ++lev)
+    for (int lev = lbase; lev <= new_finest; ++lev)
     {
         if (lev <= finest_level) // an old level
         {

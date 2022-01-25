@@ -3,6 +3,9 @@
 # Name of the base image
 base="ubuntu"
 
+# Name of the default image
+image="amrex"
+
 # Name of the local container
 container="amrex"
 

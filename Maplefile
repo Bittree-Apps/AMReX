@@ -1,0 +1,16 @@
+# Maplefile for AMReX
+
+# Name of the base image
+base="ubuntu"
+
+# Name of the local container
+container="amrex"
+
+# Container backend
+backend="docker"
+
+# Default commands for execute
+execute=["./configure --dim=1 --prefix=/home/lib/amrex/1D && make -j 4 && make install",
+         "./configure --dim=2 --prefix=/home/lib/amrex/2D && make -j 4 && make install",
+         "./configure --dim=3 --prefix=/home/lib/amrex/3D && make -j 4 && make install",
+         "make clean && make distclean"]

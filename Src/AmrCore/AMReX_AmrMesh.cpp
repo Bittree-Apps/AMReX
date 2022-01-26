@@ -469,7 +469,7 @@ AmrMesh::MakeNewGrids (int lbase, Real time, int& new_finest, Vector<BoxArray>& 
     for (int lev=lbase; lev<= finest_level+2; ++lev)
     {
         bittree_callback(lev, time, new_finest, new_grids[lev], new_dmap[lev]);
-    }  
+    }
 }
 
 void

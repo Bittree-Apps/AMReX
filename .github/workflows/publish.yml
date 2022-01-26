@@ -24,4 +24,4 @@ jobs:
           maple container execute
           maple container commit --image=amrex
           maple container rinse
-          maple push amrex ${{secrets.DOCKER_HUB_USERNAME}}/amrex:latest
+          maple push amrex akashdhruv/amrex:latest

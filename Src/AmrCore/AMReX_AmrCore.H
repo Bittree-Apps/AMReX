@@ -64,8 +64,7 @@ public:
 
     //! Rebuild levels finer than lbase
     virtual void regrid (int lbase, Real time, bool initial=false);
-
-    //! Rebuild levels finer than lbase using a bittree callback function 
+    //! Rebuild levels finer than lbase using a bittree callback function
     virtual void regrid (int lbase, Real time, BittreeFunct& bittree_callback, bool initial=false);
 
     void printGridSummary (std::ostream& os, int min_lev, int max_lev) const noexcept;

@@ -3,7 +3,7 @@ name: Publish
 on:
   push:
     branches:
-    - flashx-bittree
+    - development
     paths-ignore:
     - '**.md'
     - 'LICENSE'

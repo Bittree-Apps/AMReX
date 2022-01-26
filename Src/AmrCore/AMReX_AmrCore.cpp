@@ -144,7 +144,7 @@ AmrCore::regrid (int lbase, Real time, BittreeFunct& bittree_callback, bool)
                 if (ba_changed) {
                     level_grids = new_grids[lev];
                 }
-                const auto old_num_setdm = num_setdm;
+                //const auto old_num_setdm = num_setdm;
                 RemakeLevel(lev, time, level_grids, level_dmap);
                 SetBoxArray(lev, level_grids);
                 //if (old_num_setdm == num_setdm) {
@@ -155,7 +155,7 @@ AmrCore::regrid (int lbase, Real time, BittreeFunct& bittree_callback, bool)
         }
         else  // a new level
         {
-            const auto old_num_setdm = num_setdm;
+            //const auto old_num_setdm = num_setdm;
             MakeNewLevelFromCoarse(lev, time, new_grids[lev], new_dmap[lev]);
             SetBoxArray(lev, new_grids[lev]);
             //if (old_num_setdm == num_setdm) {

@@ -10,7 +10,6 @@ on:
       - 'CITATION'
 
 jobs:
-
   Publish:
     name: "Publish" 
     runs-on: ubuntu-latest

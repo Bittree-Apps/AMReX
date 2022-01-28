@@ -1,20 +1,32 @@
 # Maplefile for AMReX
 
-# Name of the base image
-base="ubuntu"
+# Name of the base image which will
+# be used to build the local image 
+base='ubuntu'
 
-# Name of the default image
-image="amrex"
+# Name of the local image that will be
+# used to pour the container and add layers
+image='amrex'
 
-# Name of the local container
-container="amrex"
+# Commands for building local image and 
+# installing dependencies 
+build=['export TZ=US/Michigan',
+       'ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone',
+       'apt-get update -y && apt-get install -y apt-utils && apt-get upgrade -y',
+       'apt-get install -y libhdf5-openmpi-dev openmpi-bin',
+       'apt-get install -y python python3 python3-dev python3-pip']
 
-# Container backend
-backend="docker"
+# Name of the local container that will be used
+# to run/modify the image
+# Note: 'container' is a writable instance of an 'image'
+container='amrex'
 
-# Default commands for execute
-execute=["./configure --dim=1 --prefix=/home/lib/amrex/1D && make && make install",
-         "./configure --dim=2 --prefix=/home/lib/amrex/2D && make && make install",
-         "./configure --dim=3 --prefix=/home/lib/amrex/3D && make && make install",
-         "make clean && make distclean",
-         "rm -rf tmp_build_dir"]
+# Commands to execute inside the container and update the
+# image
+publish=['./configure --dim=1 --prefix=/home/lib/amrex/1D && make -j10 && make install',
+         './configure --dim=2 --prefix=/home/lib/amrex/2D && make -j10 && make install',
+         './configure --dim=3 --prefix=/home/lib/amrex/3D && make -j10 && make install',
+         'make clean && make distclean && rm -rf tmp_build_dir']
+
+# Backend for service docker/singularity
+backend='docker'

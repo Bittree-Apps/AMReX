@@ -23,9 +23,9 @@ container='amrex'
 
 # Commands to execute inside the container and update the
 # image
-publish=['./configure --dim=1 --prefix=/home/lib/amrex/1D && make -j10 && make install',
-         './configure --dim=2 --prefix=/home/lib/amrex/2D && make -j10 && make install',
-         './configure --dim=3 --prefix=/home/lib/amrex/3D && make -j10 && make install',
+publish=['./configure --dim=1 --prefix=/home/lib/amrex/1D && make && make install',
+         './configure --dim=2 --prefix=/home/lib/amrex/2D && make && make install',
+         './configure --dim=3 --prefix=/home/lib/amrex/3D && make && make install',
          'make clean && make distclean && rm -rf tmp_build_dir']
 
 # Backend for service docker/singularity

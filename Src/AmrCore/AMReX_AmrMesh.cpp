@@ -503,7 +503,7 @@ AmrMesh::MakeBaseGrids () const
 
 
 void
-AmrMesh::MakeNewGrids (int lbase, Real time, int& new_finest, Vector<BoxArray>& new_grids)
+AmrMesh::MakeNewGrids (int lbase, Real time, int& new_finest, Vector<BoxArray>& new_grids, bool with_bittree)
 {
     BL_PROFILE("AmrMesh::MakeNewGrids()");
 

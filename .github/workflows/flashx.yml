@@ -14,4 +14,4 @@ jobs:
     - uses: akashdhruv/Maple/.github/actions/maple@main
     - uses: Flash-X/Actions/incompFlow/RisingBubble@main
       with:
-        github_token: ${{secrets.GITHUB_TOKEN}}
+        github_token: ${{secrets.GIT_HUB_TOKEN}}

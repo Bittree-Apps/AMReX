@@ -1,0 +1,17 @@
+name: Flash-X
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  #1
+  RisingBubble:
+    name: "RisingBubble"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2      
+    - uses: akashdhruv/Maple/.github/actions/maple@main
+    - uses: Flash-X/Actions/incompFlow/RisingBubble@main
+      with:
+        github_token: ${{secrets.GITHUB_TOKEN}}

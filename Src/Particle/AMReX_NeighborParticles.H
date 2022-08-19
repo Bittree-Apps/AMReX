@@ -348,6 +348,11 @@ protected:
     ///
     void BuildMasks ();
 
+    ///
+    /// Are the masks computed by the above function still valid?
+    ///
+    bool areMasksValid ();
+
     void GetNeighborCommTags ();
 
     void GetCommTagsBox (Vector<NeighborCommTag>& tags, const int lev, const Box& in_box);
@@ -452,7 +457,7 @@ protected:
     ParticleCopyOp neighbor_copy_op;
     ParticleCopyPlan neighbor_copy_plan;
 
-    amrex::Gpu::DeviceVector<char> snd_buffer;
+    amrex::PODVector<char, PolymorphicArenaAllocator<char> > snd_buffer;
     amrex::Gpu::DeviceVector<char> rcv_buffer;
 
     Gpu::PinnedVector<char> pinned_snd_buffer;

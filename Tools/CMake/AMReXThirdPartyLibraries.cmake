@@ -45,7 +45,7 @@ endif ()
 # Sensei
 #
 if (AMReX_SENSEI)
-    find_package(SENSEI REQUIRED)
+    find_package( SENSEI 4.0.0 REQUIRED )
     target_link_libraries( amrex PUBLIC sensei )
 endif ()
 
@@ -82,6 +82,8 @@ if (AMReX_HYPRE)
     find_package(HYPRE 2.20.0 REQUIRED)
     if(AMReX_CUDA)
         find_package(CUDAToolkit REQUIRED)
+
+        # mandatory CUDA dependencies: cuSPARSE, cuRAND
         target_link_libraries(amrex PUBLIC CUDA::cusparse CUDA::curand)
     endif()
     target_link_libraries( amrex PUBLIC HYPRE )

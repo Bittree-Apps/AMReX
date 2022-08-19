@@ -121,7 +121,7 @@ buildNeighborCopyOp (bool use_boundary_neighbor)
 {
     BL_PROFILE("NeighborParticleContainer<NStructReal, NStructInt, NArrayReal, NArrayInt>::buildNeighborCopyOp()");
 
-    AMREX_ASSERT(hasNeighbors() == false);
+    AMREX_ASSERT(!hasNeighbors() || use_boundary_neighbor);
 
     const int lev = 0;
     const auto& geom = this->Geom(lev);
@@ -267,11 +267,18 @@ updateNeighborsGPU (bool boundary_neighbors_only)
     else
     {
         Gpu::streamSynchronize();
-        pinned_snd_buffer.resize(snd_buffer.size());
-        Gpu::dtoh_memcpy_async(pinned_snd_buffer.dataPtr(), snd_buffer.dataPtr(), snd_buffer.size());
-        neighbor_copy_plan.buildMPIFinish(this->BufferMap());
-        Gpu::streamSynchronize();
-        communicateParticlesStart(*this, neighbor_copy_plan, pinned_snd_buffer, pinned_rcv_buffer);
+        if (snd_buffer.arena()->isPinned()) {
+            neighbor_copy_plan.buildMPIFinish(this->BufferMap());
+            Gpu::streamSynchronize();
+            communicateParticlesStart(*this, neighbor_copy_plan, snd_buffer, pinned_rcv_buffer);
+        } else {
+            pinned_snd_buffer.resize(snd_buffer.size());
+            Gpu::dtoh_memcpy_async(pinned_snd_buffer.dataPtr(), snd_buffer.dataPtr(), snd_buffer.size());
+            neighbor_copy_plan.buildMPIFinish(this->BufferMap());
+            Gpu::streamSynchronize();
+            communicateParticlesStart(*this, neighbor_copy_plan, pinned_snd_buffer, pinned_rcv_buffer);
+        }
+
         rcv_buffer.resize(pinned_rcv_buffer.size());
         unpackBuffer(*this, neighbor_copy_plan, snd_buffer, NeighborUnpackPolicy());
         communicateParticlesFinish(neighbor_copy_plan);

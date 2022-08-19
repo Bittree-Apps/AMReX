@@ -6,6 +6,10 @@
 #include <AMReX_ParallelDescriptor.H>
 #include <AMReX_Print.H>
 
+#include <AMReX_Bittree.H>
+
+#include <memory>
+
 namespace amrex {
 
 AmrMesh::AmrMesh ()
@@ -374,6 +378,8 @@ AmrMesh::InitAmrMesh (int max_level_in, const Vector<int>& n_cell_in,
 
     finest_level = -1;
 
+    pp.get("use_bittree",use_bittree);
+
     if (check_input) checkInput();
 }
 
@@ -501,6 +507,8 @@ AmrMesh::MakeNewGrids (int lbase, Real time, int& new_finest, Vector<BoxArray>& 
     int max_crse = std::min(finest_level, max_level-1);
 
     if (new_grids.size() < max_crse+2) new_grids.resize(max_crse+2);
+
+    if(!use_bittree) {
 
     //
     // Construct problem domain at each level.
@@ -762,6 +770,66 @@ AmrMesh::MakeNewGrids (int lbase, Real time, int& new_finest, Vector<BoxArray>& 
             }
         }
     }
+    }
+
+    // Bittree version
+    if(use_bittree) {
+        // Initialize BT refinement
+        btmesh->refine_init();
+
+        // -------------------------------------------------------------------
+        // Use tagging data to mark BT for refinement, then use the new bitmap
+        // to calculate the new grids.
+        auto tree0 = btmesh->getTree();
+
+        // [1] Error Estimation and tagging
+        // btTags is indexed by bitid, Bittree's internal indexing scheme.
+        // For any id, btTags = 1 if should be parent, -1 if should not be parent (or not exist).
+        std::vector<int> btTags(tree0->id_upper_bound(),0);
+
+        for (int lev=max_crse; lev>=lbase; --lev) {
+
+            TagBoxArray tags(grids[lev],dmap[lev], n_error_buf[lev]);
+            ErrorEst(lev, tags, time, 0);
+            tags.buffer(n_error_buf[lev]);
+
+            for (MFIter mfi(tags); mfi.isValid(); ++mfi) {
+                auto const& tagbox = tags.const_array(mfi);
+                bool has_set_tags = amrex::Reduce::AnyOf(mfi.validbox(),
+                                                         [=] AMREX_GPU_DEVICE (int i, int j, int k)
+                                                         {
+                                                              return tagbox(i,j,k)!=TagBox::CLEAR;
+                                                         });
+
+                // Set the values of btTags.
+                int bitid = btUnit::getBitid(btmesh.get(),false,lev,mfi.index());
+                // TODO Check lev == tree0->block_level(bitid)
+                if(has_set_tags) {
+                    btTags[bitid] = 1;
+                }
+                else {
+                    btTags[bitid] = -1;
+                }
+            }
+        }
+
+        // [2] btRefine - check for proper octree nesting and update bitmap
+        MPI_Comm comm = ParallelContext::CommunicatorSub();
+        int changed = btUnit::btRefine(btmesh.get(), btTags, comm);
+
+        // [3] btCalculateGrids - use new bitmap to generate new grids
+        if (changed>0) {
+            btUnit::btCalculateGrids(btmesh.get(),lbase,new_finest,new_grids,max_grid_size);
+        } else {
+            new_finest = finest_level;
+            for(int i=0; i<=finest_level; ++i) {
+                new_grids[i] = grids[i];
+            }
+        }
+       
+        // Finalize BT refinement
+        btmesh->refine_apply();
+    }
 }
 
 void
@@ -771,10 +839,43 @@ AmrMesh::MakeNewGrids (Real time)
     {
         finest_level = 0;
 
-        const BoxArray& ba = MakeBaseGrids();
-        DistributionMapping dm(ba);
+        BoxArray ba;
+        DistributionMapping dm;
         const auto old_num_setdm = num_setdm;
         const auto old_num_setba = num_setba;
+
+        if(!use_bittree) {
+            ba = MakeBaseGrids();
+            dm = DistributionMapping(ba);
+        }
+        else {
+            //Initialize Bittree
+
+            // top = number of grids on coarsest level in each direction
+            std::vector<int> top(AMREX_SPACEDIM,0);
+            IntVect ncells = geom[0].Domain().length();
+            for(int i=0; i<AMREX_SPACEDIM; ++i) {
+                top[i] = ncells[i] / max_grid_size[0][i];
+            }
+
+            // includes = boolean to check each coarsest level grid exists
+            // (Bittree supports having "holes" in the mesh)
+            int ngrids = AMREX_D_TERM(top[0],*top[1],*top[2]);
+            std::vector<int> includes(ngrids,1);
+
+            btmesh = std::make_shared<bittree::BittreeAmr>(top.data(),includes.data());
+
+            // Set BCs
+            for(int d=0; d<AMREX_SPACEDIM; ++d) {
+                btUnit::bcPeriodic[d] = geom[0].isPeriodic(d);
+            }
+
+
+            // Use Bittree to make coarsest level (don't need MakeBaseGrids)
+            // Need to use Bittree, so the indices of grids[lev] will be compatible with BT.
+            btUnit::btCalculateLevel(btmesh.get(),0,ba,max_grid_size[0]);
+            dm = DistributionMapping(ba);
+        }
 
         MakeNewLevelFromScratch(0, time, ba, dm);
 

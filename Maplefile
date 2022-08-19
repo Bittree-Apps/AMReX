@@ -1,4 +1,4 @@
-# Maplefile for BoxKit
+# Maplefile for AMReX
 
 # Name of the base image which will
 # be used to build the local image

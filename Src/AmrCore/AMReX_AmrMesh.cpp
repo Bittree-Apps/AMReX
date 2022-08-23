@@ -838,7 +838,7 @@ AmrMesh::MakeNewGrids (int lbase, Real time, int& new_finest, Vector<BoxArray>& 
                 new_grids[i] = grids[i];
             }
         }
-       
+
         // Finalize BT refinement
         btmesh->refine_apply();
 

@@ -26,6 +26,6 @@ jobs:
     - uses: akashdhruv/Maple/.github/actions/maple@main
     - name: Publish Amrex Image
       run: |
-          maple image build amrex --as-root
+          maple image build amrex --image=${{secrets.DOCKER_HUB_USERNAME}}/bittree:latest --as-root
           maple container publish --image=amrex
           maple push amrex ${{secrets.DOCKER_HUB_USERNAME}}/amrex:latest

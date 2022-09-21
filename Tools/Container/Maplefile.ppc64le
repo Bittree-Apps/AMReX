@@ -1,0 +1,29 @@
+# Maplefile for AMReX
+
+# Name of the base image which will
+# be used to build the local image
+base = "localhost/bittree"
+
+# Platform
+platform = "linux/ppc64le"
+
+# Name of the local container that will be used
+# to run/modify the image
+container = "amrex"
+
+# MPI path from host
+mpi = "/sw/summit/spack-envs/base/opt/linux-rhel8-ppc64le/gcc-9.1.0/spectrum-mpi-10.4.0.3-20210112-6jbupg3thjwhsabgevk6xmwhd2bbyxdc"
+
+# Commands for building local image and
+# installing dependencies
+build = [
+    "./configure --dim=2 --enable-bittree=yes --prefix=/home/lib/amrex/2D",
+    "export BITTREE_2D_HOME=/home/lib/bittree/2D && make && make install",
+    "make clean",
+    "./configure --dim=3 --enable-bittree=yes --prefix=/home/lib/amrex/3D",
+    "export BITTREE_3D_HOME=/home/lib/bittree/3D && make && make install",
+    "make clean",
+]
+
+# Backend for service docker/singularity
+backend = "podman"

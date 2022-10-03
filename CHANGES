@@ -1,3 +1,82 @@
+# 22.10
+
+  -- Solve an issue with particles async IO when having runtime added variables (#2966)
+
+  -- Fix int overflow in amrex::bisect (#2964)
+
+  -- Fix MLEBNodeFDLaplacian bottom solver (#2963)
+
+  -- make tagging routines EB_aware (#2962)
+
+  -- Volume weighted sum (#2961)
+
+  -- CellData: data in a single cell (#2959)
+
+  -- Quartic interpolation for cell centered data (#2960)
+
+  -- Add GPU-compatible upper bound and lower bound algorithms to AMReX_Algorithm (#2958)
+
+  -- add option for makebuildsources to specify the style arguments for 'git describe'. (#2957)
+
+  -- Add roundoff_lo corresponding to roundoff_hi for domains that don't start at 0 (#2950)
+
+  -- Add template parameter to ParallelFor and launch specifying block size (#2947)
+
+  -- Byte spread fixes (#2949)
+
+  -- CMake: HIP_PATH from ROCM_PATH (#2948)
+
+  -- Fix: Make Finalize->Initialize->F->I->... Work (#2944)
+
+  -- Changes for Cray & Clang (#2941)
+
+  -- Link to cublas when using CUDA and Hypre (#2933)
+
+  -- HIP: use coarse grained host memory (#2932)
+
+  -- EB checkpoint files (#2897)
+
+  -- Fix: Loading Files Again (#2936)
+
+  -- Check if boundary particles container has been created before clearance. (#2935)
+
+  -- SYCL: Replace deprecated atomic types and operations (#2921)
+
+# 22.09
+
+  -- Preserve neighbor particles when sorting particles. (#2923)
+
+  -- Scope of NonLocalBC::ParallelCopy (#2922)
+
+  -- Open Boundary Poisson Solver (#2912)
+     Add hypre as an option for OpenBCSolver (#2931)
+
+  -- Fix OOB access of ref ratio on HDF write header (#2919)
+
+  -- Add Polaris to GNUMake (#2908)
+
+  -- Export GpuDevice Globals (#2918)
+
+  -- enable LinOp to use the right Factory (fixes moving geometry problem) (#2916)
+
+  -- Use 1 atomic instead of two per item in DenseBins::build (#2911)
+
+  -- [SYCL] Remove amrex::oneapi and update deprecated device descriptors (#2910)
+
+  -- Add: `MultiFab::sum_unique` (#2909)
+
+  -- In MLMG::mgFcycle, assert that for EB the linop is cell-centered. (#2905)
+
+  -- EB: Add Fine Levels (#2881)
+
+  -- Add rpath to lib64 for ZFP. (#2902)
+
+  -- change data types from double to amrex::Real, and thus we can use single precision for the hypre IJ interface (#2896)
+
+  -- MPMD Support (#2895)
+
+  -- MLMG interface (#2858)
+
 # 22.08
 
   -- Let `selectActualNeighbors` return right after starting if there are no

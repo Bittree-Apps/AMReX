@@ -784,6 +784,9 @@ AmrMesh::MakeNewGrids (int lbase, Real time, int& new_finest, Vector<BoxArray>& 
 #ifdef AMREX_USE_BITTREE
     // Bittree version
     if(use_bittree) {
+
+        BL_PROFILE("AmrMesh-bittree");
+
         // Initialize BT refinement
         btmesh->refine_init();
 

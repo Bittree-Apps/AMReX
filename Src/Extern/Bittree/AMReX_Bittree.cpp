@@ -145,6 +145,9 @@ int btUnit::getIndex(BittreeAmr* const mesh, bool updated,
   * between surrounding leaf blocks.
   */
 void btUnit::btCheckRefine(BittreeAmr* const mesh, std::vector<int>& btTags, MPI_Comm comm ) {
+
+    BL_PROFILE("Bittree-btCheckRefine");
+
     // Tree before refinement.
     auto tree0 = mesh->getTree();
 
@@ -201,6 +204,9 @@ void btUnit::btCheckRefine(BittreeAmr* const mesh, std::vector<int>& btTags, MPI
   * between surrounding leaf blocks.
   */
 void btUnit::btCheckDerefine(BittreeAmr* const mesh, std::vector<int>& btTags, MPI_Comm comm ) {
+
+    BL_PROFILE("Bittree-btCheckDerefine");
+
     // Tree before refinement. With only one rank, lnblocks = nblocks.
     auto tree0 = mesh->getTree();
 

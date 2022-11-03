@@ -262,6 +262,9 @@ void btUnit::btCheckDerefine(BittreeAmr* const mesh, std::vector<int>& btTags, M
 
 // Check all neighbors to see if their adjacent children are parents or marked for refinement.
 bool btUnit::checkNeighborsRefine(BittreeAmr* const mesh, MortonTree::Block b) {
+
+    BL_PROFILE("Bittree-checkNeighborsRefine");
+
     auto tree0 = mesh->getTree();
     auto tree1 = mesh->getTree(true);
     int nIdx[3], cIdx[3];

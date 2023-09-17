@@ -450,7 +450,28 @@ AmrMesh::LevelDefined (int lev) noexcept
 DistributionMapping
 AmrMesh::MakeDistributionMap (int lev, BoxArray const& ba)
 {
-    return DistributionMapping(ba);
+
+    DistributionMapping dm;
+
+#ifdef AMREX_USE_BITTREE
+    if(!use_bittree) {
+#endif
+
+        dm.define(ba);
+
+#ifdef AMREX_USE_BITTREE
+    }
+#endif
+
+#ifdef AMREX_USE_BITTREE
+    // Bittree version
+    // TODO: Add logic for creating Vector<int> pmap{...} using btmesh->getTree()
+    if(use_bittree) {
+        dm.define(ba);
+    }
+#endif
+
+    return dm;
 }
 
 void

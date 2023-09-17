@@ -5,6 +5,7 @@
 #include <AMReX_ParmParse.H>
 #include <AMReX_ParallelDescriptor.H>
 #include <AMReX_Print.H>
+#include <AMReX_Vector.H>
 
 #ifdef AMREX_USE_BITTREE
 #include <AMReX_Bittree.H>
@@ -467,6 +468,37 @@ AmrMesh::MakeDistributionMap (int lev, BoxArray const& ba)
     // Bittree version
     // TODO: Add logic for creating Vector<int> pmap{...} using btmesh->getTree()
     if(use_bittree) {
+
+        // get mortron tree from btmesh
+        auto tree = btmesh->getTree();
+
+        // get total number of procs from the parallel descriptor
+        auto nprocs = ParallelDescriptor::NProcs();
+
+        // get tree information across all level
+        auto id0_all = tree->level_id0(0);
+        auto id1_all = tree->id_upper_bound();
+        auto nblocks_all = tree->blocks();
+
+        // get tree information at current level
+        auto id0_lev = tree->level_id0(lev);
+        auto id1_lev = tree->level_id1(lev);
+        auto nblocks_lev = tree->level_blocks(lev);
+
+        // create a processor map for blocks at current level
+        Vector<int> pmap[nblocks_lev];
+
+        for(int i=id0_lev; i<id1_lev; ++i) {
+            // TODO:
+            // use i-id0_all+1 to get the position of the block
+            // in the tree, then using the total nblocks_all
+            // and nprocs find the processor this block will
+            // reside on
+            // pmap[i] = f(i, id0_all, nblocks_all, nprocs)
+        }
+
+        // TODO: use pmap instead of ba
+        // dm.define(pmap);
         dm.define(ba);
     }
 #endif

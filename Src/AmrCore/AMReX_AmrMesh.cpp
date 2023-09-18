@@ -452,12 +452,20 @@ DistributionMapping
 AmrMesh::MakeDistributionMap (int lev, BoxArray const& ba)
 {
 
+    BL_PROFILE("AmrMesh::MakeDistributionMap()");
+
+    // useful print statement to notify that a new distribution map is being created at lev
+    amrex::Print() << "creating new distribution map on level: " << lev + 1 << "\n";
+
+    // initialize new distribution mapping
     DistributionMapping dm;
 
 #ifdef AMREX_USE_BITTREE
-    if(!use_bittree) {
+    if(!use_bittree)
+    {
 #endif
 
+        // create distribution mapping using boxarray
         dm.define(ba);
 
 #ifdef AMREX_USE_BITTREE
@@ -466,9 +474,9 @@ AmrMesh::MakeDistributionMap (int lev, BoxArray const& ba)
 
 #ifdef AMREX_USE_BITTREE
     // Bittree version
-    // TODO: Add logic for creating Vector<int> pmap{...} using btmesh->getTree()
-    if(use_bittree) {
-
+    // TODO: This logic is buggy. Need to fix
+    if(use_bittree)
+    {
         // get mortron tree from btmesh
         auto tree = btmesh->getTree();
 
@@ -476,7 +484,7 @@ AmrMesh::MakeDistributionMap (int lev, BoxArray const& ba)
         auto nprocs = ParallelDescriptor::NProcs();
 
         // get reference id of the morton tree and total blocks
-        auto idref = tree->level_id0(0); // ?replace 0 with lbase? 
+        auto idref = tree->level_id0(0); // ?replace 0 with lbase?
         auto nblocks = tree->blocks();
 
         // get tree information at number of blocks at current level
@@ -485,22 +493,31 @@ AmrMesh::MakeDistributionMap (int lev, BoxArray const& ba)
         auto lblocks = tree->level_blocks(lev);
 
         // create a processor map for blocks at current level
-        Vector<int> pmap[lblocks];
+        Vector<int> pmap;
 
-        //for(int i=id0; i<id1; ++i) {
-            // TODO:
-            // use i-idref+1 to get the position of the block
-            // in the tree, then using the total nblocks
-            // and nprocs find the processor this block will
-            // reside on
-            // pmap[i] = f(i, idref, nblocks, nprocs)
-        //}
+        // get div and mod using total blocks and number of procs
+        int div = int(nblocks)/nprocs;
+        int mod = nblocks%nprocs;
 
+        // loop over morton tree at current level
+        for(int i=id0; i<id1; ++i)
+        {
+            // loop over procs
+            for(int proc=0; proc<nprocs; ++proc)
+            {
+                // condition to check affinity of a block to processor
+                if (((i - idref) >= proc*div + min(proc, mod)) && ((i - idref) < (proc + 1)*div + min(proc + 1, mod)))
+                {
+                    pmap.push_back(proc);
+                }
+            }
+        }
+
+        // some useful print statements to help understand mortron tree structure
         amrex::Print() << "level: " << lev + 1 << " " << "tree loc: " << id0 << "-" << id1 << "\n";
 
-        // TODO: use pmap instead of ba
-        // dm.define(pmap);
-        dm.define(ba);
+        // create distribution mapping
+        dm.define(pmap);
     }
 #endif
 

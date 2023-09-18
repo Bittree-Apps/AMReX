@@ -475,27 +475,28 @@ AmrMesh::MakeDistributionMap (int lev, BoxArray const& ba)
         // get total number of procs from the parallel descriptor
         auto nprocs = ParallelDescriptor::NProcs();
 
-        // get tree information across all level
-        auto id0_all = tree->level_id0(0);
-        auto id1_all = tree->id_upper_bound();
-        auto nblocks_all = tree->blocks();
+        // get reference id of the morton tree and total blocks
+        auto idref = tree->level_id0(0); // ?replace 0 with lbase? 
+        auto nblocks = tree->blocks();
 
-        // get tree information at current level
-        auto id0_lev = tree->level_id0(lev);
-        auto id1_lev = tree->level_id1(lev);
-        auto nblocks_lev = tree->level_blocks(lev);
+        // get tree information at number of blocks at current level
+        auto id0 = tree->level_id0(lev);
+        auto id1 = tree->level_id1(lev);
+        auto lblocks = tree->level_blocks(lev);
 
         // create a processor map for blocks at current level
-        Vector<int> pmap[nblocks_lev];
+        Vector<int> pmap[lblocks];
 
-        for(int i=id0_lev; i<id1_lev; ++i) {
+        //for(int i=id0; i<id1; ++i) {
             // TODO:
-            // use i-id0_all+1 to get the position of the block
-            // in the tree, then using the total nblocks_all
+            // use i-idref+1 to get the position of the block
+            // in the tree, then using the total nblocks
             // and nprocs find the processor this block will
             // reside on
-            // pmap[i] = f(i, id0_all, nblocks_all, nprocs)
-        }
+            // pmap[i] = f(i, idref, nblocks, nprocs)
+        //}
+
+        amrex::Print() << "level: " << lev + 1 << " " << "tree loc: " << id0 << "-" << id1 << "\n";
 
         // TODO: use pmap instead of ba
         // dm.define(pmap);
